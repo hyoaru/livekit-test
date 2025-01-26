@@ -5,23 +5,24 @@ import { AccessToken } from "livekit-server-sdk";
 export const revalidate = 0;
 
 export async function GET(req: NextRequest) {
-  const room = req.nextUrl.searchParams.get("room");
-  const username = req.nextUrl.searchParams.get("username");
-  if (!room) {
+  const roomName = req.nextUrl.searchParams.get("roomName");
+  const identity = req.nextUrl.searchParams.get("identity");
+
+  if (!roomName) {
     return NextResponse.json(
-      { error: 'Missing "room" query parameter' },
+      { error: 'Missing "roomName" query parameter' },
       { status: 400 },
     );
-  } else if (!username) {
+  } else if (!identity) {
     return NextResponse.json(
-      { error: 'Missing "username" query parameter' },
+      { error: 'Missing "identity" query parameter' },
       { status: 400 },
     );
   }
 
   const apiKey = process.env.LIVEKIT_API_KEY;
   const apiSecret = process.env.LIVEKIT_API_SECRET;
-  const wsUrl = process.env.LIVEKIT_URL;
+  const wsUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL;
 
   if (!apiKey || !apiSecret || !wsUrl) {
     return NextResponse.json(
@@ -30,11 +31,17 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const at = new AccessToken(apiKey, apiSecret, { identity: username });
-  at.addGrant({ room, roomJoin: true, canPublish: true, canSubscribe: true });
+  const at = new AccessToken(apiKey, apiSecret, { identity: identity });
+
+  at.addGrant({
+    room: roomName,
+    roomJoin: true,
+    canPublish: true,
+    canSubscribe: true,
+  });
 
   return NextResponse.json(
-    { token: await at.toJwt() },
+    { accessToken: await at.toJwt() },
     { headers: { "Cache-Control": "no-store" } },
   );
 }

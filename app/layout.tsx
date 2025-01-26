@@ -35,9 +35,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="container mx-auto flex flex-col min-h-screen">
-            <div className="grid grow h-full w-full">{children}</div>
-          </div>
+          <div className="container mx-auto">{children}</div>
         </ThemeProvider>
       </body>
     </html>

@@ -1,13 +1,14 @@
-"use client";
-
+import { Button } from "@/components/ui/button";
 import "@livekit/components-styles";
-import { PreJoin } from "@livekit/components-react";
+import Link from "next/link";
 
 export default function Home() {
   return (
     <>
-      <div>
-        <PreJoin data-lk-theme="default" />
+      <div className="absolute inset-0 flex justify-center items-center ">
+        <Link href="/room" prefetch>
+          <Button>Enter room</Button>
+        </Link>
       </div>
     </>
   );
